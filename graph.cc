@@ -47,23 +47,42 @@ class Graph {
     }
     void add_node(const K &key, const attr &a);
     void set_node_attr(const K &key, const attr &a);
-    void add_node_attr(const K &key, string &attr_name, boost::any &value);
-    boost::any get_node_attr(const K &key, string &attr_name);
+    void add_node_attr(const K &key, const string &attr_name, boost::any &value);
+    boost::any get_node_attr(const K &key, const string &attr_name);
     void print_graph();
     void add_edge(const K &from, const K &to);
-    void add_edge_attr(const K &from, const K &to, string &key,
+    void add_edge_attr(const K &from, const K &to, const string &key,
                        boost::any &value);
+    boost::any get_edge_attr(const K &from, const K&to, const string &key);
+    void set_edge_weight(const K&from, const K &to, int weight);
+    int get_edge_weight(const K&from, const K &to);
     adjacent_list_ptr get_neighbors_by_node(const K &);
 };
 
+template<class K>
+void Graph<K>::set_edge_weight(const K&from, const K &to, int weight){
+    auto w = boost::any{weight};
+    add_edge_attr(from, to, "weight", w);
+}
+
+template<class K>
+int Graph<K>::get_edge_weight(const K&from, const K &to){
+    return boost::any_cast<int>(get_edge_attr(from, to, "weight"));
+}
+
 template <class K>
-void Graph<K>::add_node_attr(const K &key, string &attr_name,
+boost::any Graph<K>::get_edge_attr(const K&from, const K&to, const string &key){
+   return (*edge_attrs[make_pair(from, to)])[key];
+}
+
+template <class K>
+void Graph<K>::add_node_attr(const K &key, const string &attr_name,
                              boost::any &value) {
     nodes[key][attr_name] = value;
 }
 
 template <class K>
-boost::any Graph<K>::get_node_attr(const K &key, string &attr_name) {
+boost::any Graph<K>::get_node_attr(const K &key, const string &attr_name) {
     return nodes[key][attr_name];
 }
 
@@ -109,8 +128,8 @@ void Graph<K>::add_edge(const K &from, const K &to) {
     edge_attrs[np] = unique_ptr<attr>{new attr{}};
 }
 template <class K>
-void Graph<K>::add_edge_attr(const K &from, const K &to, string &attr_name,
+void Graph<K>::add_edge_attr(const K &from, const K &to, const string &attr_name,
                              boost::any &value) {
     pair<K, K> np{from, to};
-    edge_attrs[np][attr_name] = value;
+    (*edge_attrs[np])[attr_name] = value;
 }

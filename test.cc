@@ -33,7 +33,19 @@ int test_add_edge(){
 
 }
 
+int test_add_weight(){
+  Graph<string> g;
+  g.add_node("a");
+  g.add_node("c");
+  g.add_edge("a", "c");
+  g.set_edge_weight("a", "c", 1456);
+  assertm(g.get_edge_weight("a", "c") == 1456, "test set weight error");
+  cout <<"cool"<<endl;
+  return 0;
+}
+
 int main() {
     test_add_node();
     test_add_edge();
+    test_add_weight();
 }
