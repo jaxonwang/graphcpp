@@ -17,3 +17,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(graph test.cc)
 
+add_executable(fpbymeta fpcpp.cc)
+
